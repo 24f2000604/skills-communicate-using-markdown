@@ -4,3 +4,8 @@
 x=4
 print (x)
 ```
+- [x] lst itm 1
+- [x] lst itm 2
+- [ ] ...
+- [ ] ......
+- [ ]  edfbgvf,lcd
