@@ -1,0 +1,54 @@
+name: Daily Scheduled Commit
+
+Controls when the workflow will run
+
+on:
+
+Triggers the workflow daily at 04:30 UTC.
+
+UTC 04:30 corresponds to 10:00 IST (Indian Standard Time).
+
+schedule:
+- cron: '14 1 * * *'
+
+Also allows manual execution from the Actions tab
+
+workflow_dispatch:
+
+A workflow run is made up of one or more jobs
+
+jobs:
+daily_update:
+runs-on: ubuntu-latest
+
+steps:
+  # Checks-out your repository so the job can access it
+  - uses: actions/checkout@v4
+    with:
+      # Use the GITHUB_TOKEN for pushing changes
+      token: ${{ secrets.GITHUB_TOKEN }}
+
+  # Step name includes the required email
+  - name: Add Daily Commit - 24f2000604@ds.study.iitm.ac.in
+    run: |
+      # Configure Git user for the commit
+      git config user.name "github-actions[bot]"
+      git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # 1. Create a file with the current UTC timestamp
+      TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+      echo "Last run at: $TIMESTAMP" > last_daily_run.txt
+
+      # 2. Add the created/modified file to the staging area
+      git add last_daily_run.txt
+
+      # 3. Check if there are any changes to commit
+      if git diff --staged --quiet; then
+        echo "No changes detected. Skipping commit."
+      else
+        # 4. Commit the changes
+        git commit -m "SCHEDULER: Daily commit triggered at $TIMESTAMP"
+
+        # 5. Push the commit back to the main branch
+        git push
+      fi
